@@ -1,14 +1,13 @@
-package br.com.caelum.leilao.teste;
+package br.com.caelum.leilao;
 
+import org.junit.Assert;
 import org.junit.Test;
 
-import br.com.caelum.leilao.Avaliador;
 import br.com.caelum.leilao.dominio.Lance;
 import br.com.caelum.leilao.dominio.Leilao;
-import br.com.caelum.leilao.dominio.Usuario;
-import org.junit.Assert;;
+import br.com.caelum.leilao.dominio.Usuario;;
 
-public class TesteAvaliador {
+public class AvaliadorTest {
 	
 	@Test
 	public void deveEntenderLancesEmOrdemAleatoria() {
@@ -30,6 +29,25 @@ public class TesteAvaliador {
 		Assert.assertEquals(250.0, avaliador.getMenorLance(), 0.0001);
 		
 		
+	}
+	
+	@Test
+	public void deveCalcularAMediaDosLances() {
+
+		Usuario joao = new Usuario("Joao");
+		Usuario maria = new Usuario("Maria");
+		Usuario jose = new Usuario("José");
+		
+		Leilao leilao = new Leilao("Playstation 4");
+		
+		leilao.propoe(new Lance(joao, 500));
+		leilao.propoe(new Lance(maria, 250));
+		leilao.propoe(new Lance(jose, 400));
+		
+		Avaliador avaliador = new Avaliador();
+		double media = avaliador.getValorMedioLances(leilao);
+		
+		Assert.assertEquals(383.33333, media, 0.00001);
 	}
 
 }

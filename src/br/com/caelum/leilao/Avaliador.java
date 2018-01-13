@@ -1,6 +1,5 @@
 package br.com.caelum.leilao;
 
-import br.com.caelum.leilao.dominio.Lance;
 import br.com.caelum.leilao.dominio.Leilao;
 
 public class Avaliador {
@@ -9,10 +8,22 @@ public class Avaliador {
 	private double menorLance = Double.POSITIVE_INFINITY;
 	
 	public void avalia(Leilao leilao) {
-		for (Lance lance : leilao.getLances()) {
-			if (lance.getValor() > this.maiorLance) this.maiorLance = lance.getValor();
-			if (lance.getValor() < this.menorLance) this.menorLance = lance.getValor();
-		}
+		
+		leilao.getLances().forEach(lance -> {
+			if (lance.getValor() < getMenorLance()) setMenorLance(lance.getValor());
+			if (lance.getValor() > getMaiorLance()) setMaiorLance(lance.getValor());
+		});
+		
+	
+	}
+	
+	public Double getValorMedioLances(Leilao leilao) {
+		return leilao
+				.getLances()
+				.parallelStream()
+				.mapToDouble(lance -> lance.getValor())
+				.average()
+				.getAsDouble();
 	}
 
 	public double getMaiorLance() {
@@ -21,6 +32,14 @@ public class Avaliador {
 
 	public double getMenorLance() {
 		return menorLance;
+	}
+	
+	private void setMaiorLance(Double lance) {
+		this.maiorLance = lance;
+	}
+	
+	private void setMenorLance(Double lance) {
+		this.menorLance = lance;
 	}
 
 }
