@@ -14,8 +14,24 @@ public class Leilao {
 		this.lances = new ArrayList<Lance>();
 	}
 	
-	public void propoe(Lance lance) {
-		lances.add(lance);
+	public void propoe(Lance lance) {	
+		
+		if (this.lances.isEmpty() || podeDarLance(lance.getUsuario())) {
+			lances.add(lance);	
+		}		
+	}
+
+	private boolean podeDarLance(Usuario usuario) {
+		long total = this.lances
+				.stream()
+				.filter((l) -> l.getUsuario().equals(usuario))
+				.count();		
+		
+		return !getUltimoLanceDado().getUsuario().equals(usuario) && total < 5L;
+	}
+
+	public Lance getUltimoLanceDado() {
+		return lances.get(lances.size() - 1);
 	}
 
 	public String getDescricao() {
