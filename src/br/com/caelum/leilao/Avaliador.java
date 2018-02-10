@@ -16,6 +16,10 @@ public class Avaliador {
 	
 	public void avalia(Leilao leilao) {
 		
+		if (leilao.getLances().size() == 0) {
+			throw new RuntimeException("Não é possível avaliar leilão sem lances");
+		}
+		
 		leilao.getLances().forEach(lance -> {
 			if (lance.getValor() < getMenorLance()) setMenorLance(lance.getValor());
 			if (lance.getValor() > getMaiorLance()) setMaiorLance(lance.getValor());
@@ -26,8 +30,8 @@ public class Avaliador {
 
 			@Override
 			public int compare(Lance arg0, Lance arg1) {
-				if (arg0.getValor() > arg1.getValor()) return 1;
-				if (arg0.getValor() < arg1.getValor()) return -1;
+				if (arg0.getValor() > arg1.getValor()) return -1;
+				if (arg0.getValor() < arg1.getValor()) return 1;
 				return 0;
 			}
 			

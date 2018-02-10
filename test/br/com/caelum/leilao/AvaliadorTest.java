@@ -2,7 +2,8 @@ package br.com.caelum.leilao;
 
 import java.util.List;
 
-import org.junit.After;
+import org.hamcrest.MatcherAssert;
+import org.hamcrest.Matchers;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -26,12 +27,7 @@ public class AvaliadorTest {
 		this.maria = new Usuario("Maria");
 		this.jose = new Usuario("José");
 	}
-	
-	@After
-	public void finaliza() {
-	  System.out.println("fim");
-	}
-	
+		
 	@Test
 	public void deveEntenderLancesEmOrdemAleatoria() {
 		
@@ -43,10 +39,9 @@ public class AvaliadorTest {
 		
 		leiloeiro.avalia(leilao);
 		
-		Assert.assertEquals(500.0, leiloeiro.getMaiorLance(), 0.0001);
-		Assert.assertEquals(250.0, leiloeiro.getMenorLance(), 0.0001);
-		
-		
+		MatcherAssert.assertThat(leiloeiro.getMaiorLance(), Matchers.equalTo(500.0));
+		MatcherAssert.assertThat(leiloeiro.getMenorLance(), Matchers.equalTo(250.0));
+				
 	}
 	
 	@Test
@@ -60,9 +55,8 @@ public class AvaliadorTest {
 		
 		leiloeiro.avalia(leilao);
 		
-		Assert.assertEquals(500.0, leiloeiro.getMaiorLance(), 0.0001);
-		Assert.assertEquals(250.0, leiloeiro.getMenorLance(), 0.0001);
-		
+		MatcherAssert.assertThat(leiloeiro.getMaiorLance(), Matchers.equalTo(500.0));
+		MatcherAssert.assertThat(leiloeiro.getMenorLance(), Matchers.equalTo(250.0));
 		
 	}
 	
@@ -75,8 +69,8 @@ public class AvaliadorTest {
 		
 		leiloeiro.avalia(leilao);
 		
-		Assert.assertEquals(1000.0, leiloeiro.getMaiorLance(), 0.0001);
-		Assert.assertEquals(1000.0, leiloeiro.getMenorLance(), 0.0001);
+		MatcherAssert.assertThat(leiloeiro.getMaiorLance(), Matchers.equalTo(1000.0));
+		MatcherAssert.assertThat(leiloeiro.getMenorLance(), Matchers.equalTo(1000.0));
 	}
 	
 	@Test
@@ -90,7 +84,8 @@ public class AvaliadorTest {
 		
 		double media = leiloeiro.getValorMedioLances(leilao);
 		
-		Assert.assertEquals(383.33333, media, 0.00001);
+		MatcherAssert.assertThat(media, Matchers.equalTo(383.33333333333333));
+		
 	}
 	
 	@Test
@@ -99,17 +94,29 @@ public class AvaliadorTest {
 		Leilao leilao = new CriadorDeLeilao().para("Playstation")
 				.lance(joao, 500.0)
 				.lance(maria, 250.0)
-				.lance(jose, 400)
+				.lance(jose, 400.0)
+				.lance(maria, 600.0)
 				.constroi();
 		
 		leiloeiro.avalia(leilao);
 		
 		List<Lance> maiores = leiloeiro.getMaiores();
 		
-		Assert.assertEquals(3, maiores.size());
-		Assert.assertEquals(250.0, maiores.get(0).getValor(), 0.0001);
-		Assert.assertEquals(400.0, maiores.get(1).getValor(), 0.0001);
-		Assert.assertEquals(500.0, maiores.get(2).getValor(), 0.0001);
+		MatcherAssert.assertThat(leiloeiro.getMaiores().size(), Matchers.equalTo(3));
+		MatcherAssert.assertThat(leiloeiro.getMaiores(), Matchers.hasItems(
+				new Lance(maria, 600.0),
+				new Lance(jose, 400.0),
+				new Lance(joao, 500.0)
+				));		
+		
+	}
+	
+	@Test(expected = RuntimeException.class)
+	public void naoDeveAvaliarLeiloesSemLance() {
+		
+		Leilao leilao = new CriadorDeLeilao().para("Playstation").constroi();
+		
+		this.leiloeiro.avalia(leilao);
 	}
 
 }
